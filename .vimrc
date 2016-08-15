@@ -1,28 +1,30 @@
-se hlsearch
-se nu 
-se expandtab
-se tabstop=2
-se shiftwidth=2
-se laststatus=2
-se statusline=%F\ %=%c
-se shiftwidth=2
-color desert
+se nu
+se spell spelllang = ru_ru,en 
+se linebreak
+set keywordprg     = perldoc\ -f
+set shiftwidth     = 2
+set tabstop        = 2
+set expandtab
 
-set listchars=eol:$,space:·
-:hi SpecialKey ctermfg=7 guifg=gray
+colorscheme desert
 
-nnoremap ,, :call Package() <cr>
+nnoremap ,, :call Package() <cr> 
 function! Package()
-    call inputsave()
-    let root = input('Which part of the path I must remove? ',expand('%:h'))
-    call inputrestore()
-    let package = substitute(expand('%:p'), (root.'\(.*\)\.pm'), 'package \1;', 'g')
-    call append( 0, [ substitute(package, '/','::','g') ] )
-    call append( line('$'), 'use strict;' )
-    call append( line('$'), [ 'use warnings;','','','' ] )
-    call append(line('$'), '1')
-   
-    call cursor( line('$') - 2, 0 )
+	if !exists("g:root")
+		call inputsave()
+		let root = input('Which part of the path I must remove? ',expand('%:h'))
+		call inputrestore()
+	else
+		let root = g:root
+	end
+	let package = substitute(expand('%:p'), (root.'\(.*\)\.pm'), 'package \1;', 'g')
+	call append( 0, [ substitute(package, '/','::','g') ] )
+	call append( line('$'), 'use strict;' )
+	call append( line('$'), [ 'use warnings;','','','' ] )
+	call append(line('$'), '1')
+	
+	call cursor( line('$') - 3, 0 )
 
-    call feedkeys('i')
+	call feedkeys('i')
 endfunction
+
