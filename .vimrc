@@ -14,7 +14,7 @@ autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
 "kill empty lines with spaces and spaces at the end of line
-autocmd BufWritePre *.pl,*.pm,*.js,*.c :silent :%s/\s\+$//g
+autocmd BufWritePre *.pl,*.pm,*.js,*.c :silent! :%s/\s\+$//g
 
 "check perl source syntax
 nmap <C-c> :!clear; perl -cw % <cr>
