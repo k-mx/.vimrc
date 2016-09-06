@@ -13,8 +13,18 @@ set cursorline
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
-"kill empty lines with spaces and spaces at the end of line
-autocmd BufWritePre *.pl,*.pm,*.js,*.c :silent! :%s/\s\+$//g
+"kill trailing spaces
+autocmd BufWritePre *.pl,*.pm,*.js,*.c :call KillSpaces()
+
+function! KillSpaces()
+  let pos = getpos('.')
+
+  :silent
+  :%s/\s*$//g
+
+  call setpos('.', pos )
+
+endfunction
 
 "check perl source syntax
 nmap <C-c> :!clear; perl -cw % <cr>
