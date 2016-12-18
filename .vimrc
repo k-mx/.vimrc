@@ -13,13 +13,13 @@ set cursorline
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
-"kill trailing spaces
+" kill trailing spaces
 autocmd BufWritePre *.pl,*.pm,*.js,*.c :call KillSpaces()
 
 function! KillSpaces()
+  undojoin
   let pos = getpos('.')
 
-  undojoin
   :silent
   :%s/\s*$//g
 
