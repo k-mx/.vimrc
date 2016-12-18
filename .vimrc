@@ -8,7 +8,7 @@ set expandtab
 
 set cursorline
 
-"nnoremap ,, :call NewPerlPackage() <cr> 
+" nnoremap ,, :call NewPerlPackage() <cr>
 
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
@@ -19,6 +19,7 @@ autocmd BufWritePre *.pl,*.pm,*.js,*.c :call KillSpaces()
 function! KillSpaces()
   let pos = getpos('.')
 
+  undojoin
   :silent
   :%s/\s*$//g
 
@@ -26,7 +27,7 @@ function! KillSpaces()
 
 endfunction
 
-"check perl source syntax
+" check perl source syntax
 nmap <C-c> :!clear; perl -cw % <cr>
 
 function NewPerlPackage()
@@ -62,7 +63,7 @@ function NewPerlScript()
 	call feedkeys('i')
 endfunction
 
-"customise colorscheme
+" customise colorscheme
 autocmd ColorScheme * :hi CursorLineNR ctermfg=White cterm=bold | :hi CursorLine cterm=NONE
 
 colorscheme desert
@@ -76,3 +77,10 @@ function CustomStatusline()
 endfunction
 
 set statusline=%!CustomStatusline()
+
+" hide garbage files in netrw
+let g:netrw_list_hide= '.*\.swp$,\~$,\.orig$'
+
+" for project related vimrc's
+set exrc
+set secure
