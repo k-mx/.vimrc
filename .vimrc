@@ -1,23 +1,40 @@
 set nu
-set spell spelllang =ru_ru,en 
+set spell spelllang =ru_ru,en
 set linebreak
 set keywordprg      =perldoc\ -f
 set shiftwidth      =2
 set tabstop         =2
 set expandtab
+set smartindent
 
 set cursorline
 
 " nnoremap ,, :call NewPerlPackage() <cr>
 
+" :help autocmd-groups
+aug vimrc | au!
+
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
+autocmd BufReadPost  *.p[ml] :call CheckPerlSyntax()
+autocmd BufWritePost *.p[ml] :call CheckPerlSyntax()
+
+augroup END
+
 " kill trailing spaces
-autocmd BufWritePre *.pl,*.pm,*.js,*.c :call KillSpaces()
+autocmd vimrc BufWritePre *.pl,*.pm,*.js,*.c,*.vimrc :call KillSpaces()
 
 function! KillSpaces()
-  undojoin
+
+  let undoTree = undotree()
+
+  " fix for E790,
+  " prevent call of undojoin after undo operation
+  if undoTree["seq_last"] == undoTree["seq_cur"]
+    undojoin
+  endif
+
   let pos = getpos('.')
 
   :silent
@@ -28,9 +45,21 @@ function! KillSpaces()
 endfunction
 
 " check perl source syntax
-nmap <C-c> :!clear; perl -cw % <cr>
+nmap <C-c> :call SynCheckStatus() <cr>
 
-function NewPerlPackage()
+function! CheckPerlSyntax()
+  let filePath       = shellescape( expand('%:p') )
+  let b:synChkResult = system('perl -cw ' . filePath )
+  let b:synChkStatus = v:shell_error
+endfunction
+
+function! SynCheckStatus()
+  if exists("b:synChkResult")
+    echo b:synChkResult
+  endif
+endfunction
+
+function! NewPerlPackage()
 	if !exists("g:root")
 		call inputsave()
     let root = expand('%:p')
@@ -52,7 +81,7 @@ function NewPerlPackage()
 	call feedkeys('i')
 endfunction
 
-function NewPerlScript()
+function! NewPerlScript()
 
 	call setline( line('$'), '#!/usr/bin/env perl' )
 	call append( line('$'), ['', 'use strict;'] )
@@ -71,12 +100,21 @@ colorscheme desert
 set noruler
 set laststatus=2
 
-function CustomStatusline()
+function! CustomStatusline()
 
-  return "%F\ %=col:\ %-3.v"
+
+  let l:statusline = "%F %=col: %-3.v line: %l/%L/%P"
+  if exists("b:synChkStatus")
+
+    if b:synChkStatus != 0
+      let l:statusline.= " %#Error#SYTAX ERROR!"
+    endif
+  endif
+
+  return statusline
 endfunction
 
-set statusline=%!CustomStatusline()
+setl statusline =%!CustomStatusline()
 
 " hide garbage files in netrw
 let g:netrw_list_hide= '.*\.swp$,\~$,\.orig$'
