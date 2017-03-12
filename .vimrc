@@ -107,7 +107,7 @@ function! CustomStatusline()
   if exists("b:synChkStatus")
 
     if b:synChkStatus != 0
-      let l:statusline.= " %#Error#SYTAX ERROR!"
+      let l:statusline.= " %#Error#SYNTAX ERROR!"
     endif
   endif
 
