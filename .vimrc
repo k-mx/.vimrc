@@ -117,7 +117,10 @@ endfunction
 setl statusline =%!CustomStatusline()
 
 " hide garbage files in netrw
-let g:netrw_list_hide= '.*\.swp$,\~$,\.orig$'
+let g:netrw_list_hide = '.*\.swp$,\~$,\.orig$'
+" tree style listing
+let g:netrw_liststyle =3
+let g:netrw_banner    =0
 
 " for project related vimrc's
 set exrc
