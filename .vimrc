@@ -6,6 +6,7 @@ set shiftwidth      =2
 set tabstop         =2
 set expandtab
 set smartindent
+set nowrap
 
 set cursorline
 
@@ -17,13 +18,16 @@ aug vimrc | au!
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
-autocmd BufReadPost  *.p[ml] :call CheckPerlSyntax()
-autocmd BufWritePost *.p[ml] :call CheckPerlSyntax()
-
+autocmd BufReadPost  *.p[ml],*.js,*.json,*.c,*.vimrc :call NoSpell()
+autocmd BufWinEnter  * :setl statusline =%!CustomStatusline()
 augroup END
 
 " kill trailing spaces
 autocmd vimrc BufWritePre *.pl,*.pm,*.js,*.c,*.vimrc :call KillSpaces()
+
+function! NoSpell()
+  :set nospell
+endfunction
 
 function! KillSpaces()
 
@@ -95,7 +99,7 @@ endfunction
 " customise colorscheme
 autocmd ColorScheme * :hi CursorLineNR ctermfg=White cterm=bold | :hi CursorLine cterm=NONE
 
-colorscheme desert
+colorscheme murphy
 
 set noruler
 set laststatus=2
@@ -104,17 +108,8 @@ function! CustomStatusline()
 
 
   let l:statusline = "%F %=col: %-3.v line: %l/%L/%P"
-  if exists("b:synChkStatus")
-
-    if b:synChkStatus != 0
-      let l:statusline.= " %#Error#SYNTAX ERROR!"
-    endif
-  endif
-
   return statusline
 endfunction
-
-setl statusline =%!CustomStatusline()
 
 " hide garbage files in netrw
 let g:netrw_list_hide = '.*\.swp$,\~$,\.orig$'
@@ -125,3 +120,9 @@ let g:netrw_banner    =0
 " for project related vimrc's
 set exrc
 set secure
+
+setlocal cm   =blowfish2
+
+set backupdir =~/.vim/backup
+set dir       =~/.vim/backup
+execute pathogen#infect()
