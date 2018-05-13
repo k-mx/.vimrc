@@ -11,6 +11,8 @@ set nowrap
 set cursorline
 
 " nnoremap ,, :call NewPerlPackage() <cr>
+" set cwd for current window to dir where file located
+nmap <F5> :execute "lcd " . expand("%:p:h") <CR>
 
 " :help autocmd-groups
 aug vimrc | au!
@@ -18,7 +20,7 @@ aug vimrc | au!
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
-autocmd BufReadPost  *.p[ml],*.js,*.json,*.c,*.vimrc :call NoSpell()
+autocmd BufReadPost  *.p[ml],*.js,*.json,*.c,*.vimrc,*.conf :call NoSpell()
 autocmd BufWinEnter  * :setl statusline =%!CustomStatusline()
 augroup END
 
@@ -124,5 +126,6 @@ set secure
 setlocal cm   =blowfish2
 
 set backupdir =~/.vim/backup
+set undodir   =~/.vim/backup
 set dir       =~/.vim/backup
 execute pathogen#infect()
