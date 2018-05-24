@@ -113,6 +113,40 @@ function! CustomStatusline()
   return statusline
 endfunction
 
+function! Rindent()
+" we have text:
+"
+"          foo
+"barbaz
+" thud
+"
+" select it visually and call function:
+"          foo
+"       barbaz
+"         thud
+
+  let pattern_pos =  matchstrpos(getline("'<"), "\\w\\>")
+  let indent_size = pattern_pos[1] +1
+  '<,'>s/^\s*//g
+
+  let i = line("'<")
+
+  while i <= line("'>")
+
+    let line = getline(i)
+    let pattern_pos =  matchstrpos(line, "\\S\\+")
+
+    if pattern_pos[2] > 0
+      let t = indent_size - pattern_pos[2]
+      call setline(i, printf("%". t ."S%S", "", line))
+    endif
+
+    let i+= 1
+
+  endwhile
+
+endfunction
+
 " hide garbage files in netrw
 let g:netrw_list_hide = '.*\.swp$,\~$,\.orig$'
 " tree style listing
