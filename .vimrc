@@ -2,8 +2,8 @@ set nu
 set spell spelllang =ru_ru,en
 set linebreak
 set keywordprg      =perldoc\ -f
-set shiftwidth      =2
-set tabstop         =2
+set shiftwidth      =4
+set tabstop         =4
 set expandtab
 set smartindent
 set nowrap
@@ -14,13 +14,16 @@ set cursorline
 " set cwd for current window to dir where file located
 nmap <F5> :execute "lcd " . expand("%:p:h") <CR>
 
+" save current date and time to register x
+nmap <F4> :call setreg('d', strftime('%F %T')) <CR>
+
 " :help autocmd-groups
 aug vimrc | au!
 
 autocmd BufNewFile *.pl :call NewPerlScript()
 autocmd BufNewFile *.pm :call NewPerlPackage()
 
-autocmd BufReadPost  *.p[ml],*.js,*.json,*.c,*.vimrc,*.conf :call NoSpell()
+autocmd BufReadPost  *.p[ml],*.js,*.json,*.c,*.vimrc,*.conf,*.psgi,*.tt,*.t :call NoSpell()
 autocmd BufWinEnter  * :setl statusline =%!CustomStatusline()
 augroup END
 
@@ -66,42 +69,47 @@ function! SynCheckStatus()
 endfunction
 
 function! NewPerlPackage()
-	if !exists("g:root")
-		call inputsave()
+    if !exists("g:root")
+        call inputsave()
     let root = expand('%:p')
     let root = substitute(root, (expand('%:t').'$'), '', 'g')
 
-		let root = input('Which part of the path I must remove? ', root )
-		call inputrestore()
-	else
-		let root = g:root
-	end
-	let package = substitute(expand('%:p'), (root.'/\?\(.*\)\.pm'), 'package \1;', 'g')
-	call append( 0, [ substitute(package, '/','::','g') ] )
-	call append( line('$'), 'use strict;' )
-	call append( line('$'), [ 'use warnings;','','','' ] )
-	call append(line('$'), '1')
+        let root = input('Which part of the path I must remove? ', root )
+        call inputrestore()
+    else
+        let root = g:root
+    end
+    let package = substitute(expand('%:p'), (root.'/\?\(.*\)\.pm'), 'package \1;', 'g')
+    call append( 0, [ substitute(package, '/','::','g') ] )
+    call append( line('$'), 'use strict;' )
+    call append( line('$'), [ 'use warnings;','','','' ] )
+    call append(line('$'), '1')
 
-	call cursor( line('$') - 2, 0 )
+    call cursor( line('$') - 2, 0 )
 
-	call feedkeys('i')
+    call feedkeys('i')
 endfunction
 
 function! NewPerlScript()
 
-	call setline( line('$'), '#!/usr/bin/env perl' )
-	call append( line('$'), ['', 'use strict;'] )
-	call append( line('$'), [ 'use warnings;','','' ] )
+    call setline( line('$'), '#!/usr/bin/env perl' )
+    call append( line('$'), ['', 'use strict;'] )
+    call append( line('$'), [ 'use warnings;','','' ] )
 
-	call cursor( line('$'), 0 )
+    call cursor( line('$'), 0 )
 
-	call feedkeys('i')
+    call feedkeys('i')
 endfunction
 
 " customise colorscheme
 autocmd ColorScheme * :hi CursorLineNR ctermfg=White cterm=bold | :hi CursorLine cterm=NONE
 
 colorscheme murphy
+
+" transparent verical line on column 100
+" should warn against too logn lines
+set colorcolumn =100
+hi  ColorColumn ctermbg=14 ctermfg=4
 
 set noruler
 set laststatus=2
