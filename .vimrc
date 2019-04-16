@@ -17,6 +17,9 @@ nmap <F5> :execute "lcd " . expand("%:p:h") <CR>
 " save current date and time to register x
 nmap <F4> :call setreg('d', strftime('%F %T')) <CR>
 
+" pass visually selected snippet through perltidy on ctrl+r
+vmap <C-R> !perltidy <CR>
+
 " :help autocmd-groups
 aug vimrc | au!
 
